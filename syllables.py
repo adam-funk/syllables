@@ -16,7 +16,7 @@ def count_from_pronunciation(pronunciation):
 
 def count_from_word(word):
     try:
-        pronunciations = cmudict.dict()[word]
+        pronunciations = cmudict.dict()[word.lower()]
     except KeyError:
         return []
     return [count_from_pronunciation(pronunciation) for pronunciation in pronunciations]
