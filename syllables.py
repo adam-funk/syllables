@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import nltk
+import argparse
 from nltk.corpus import cmudict
 
 # https://www.nltk.org/_modules/nltk/corpus/reader/cmudict.html
@@ -15,7 +16,7 @@ def count_from_pronunciation(pronunciation):
 def count_from_word(word):
     # TODO handle KeyError
     # TODO options for single result
-    pronunciations = cmudict.dict()['word']
+    pronunciations = cmudict.dict()[word]
     return [count_from_pronunciation(pronunciation) for pronunciation in pronunciations]
 
 # command line options for filtering
