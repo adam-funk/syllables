@@ -14,10 +14,19 @@ def count_from_pronunciation(pronunciation):
 
 
 def count_from_word(word):
-    # TODO handle KeyError
-    # TODO options for single result
-    pronunciations = cmudict.dict()[word]
+    try:
+        pronunciations = cmudict.dict()[word]
+    except KeyError:
+        return []
     return [count_from_pronunciation(pronunciation) for pronunciation in pronunciations]
+
+
+def filter_by_syllable(words, n):
+    return [word for word in words if n in count_from_word(word)]
+
 
 # command line options for filtering
 # for ignoring unknown words
+
+if __name__ == '__main__':
+    pass
