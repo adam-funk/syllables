@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import fileinput
 
 import nltk
 import argparse
@@ -25,8 +26,25 @@ def filter_by_syllable(words, n):
     return [word for word in words if n in count_from_word(word)]
 
 
-# command line options for filtering
-# for ignoring unknown words
+def filter_by_syllables(words, nn):
+    return [word for word in words if set(nn).intersection(count_from_word(word))]
 
 if __name__ == '__main__':
-    pass
+    oparser = argparse.ArgumentParser(description="syllable filter",
+                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    oparser.add_argument("-n", dest="syllable_list",
+                         required=True,
+                         type=str,
+                         help="comma-separated list of nbr of syllables")
+
+    oparser.add_argument('files', metavar='FILE', nargs='*',
+                         help='input files')
+
+    options = oparser.parse_args()
+
+    keep_counts = [int(s) for s in options.syllable_list.split(',')]
+
+    for line in fileinput.input(options.files):
+        tokens = line.strip().split()
+        print(' '.join(filter_by_syllables(tokens, keep_counts)))
