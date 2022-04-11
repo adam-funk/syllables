@@ -11,7 +11,8 @@ vowels = ['AA', 'AE', 'AH', 'AO', 'AW', 'AY', 'EH', 'ER', 'EY', 'IH', 'IY', 'OW'
 
 
 def count_from_pronunciation(pronunciation):
-    return len([phoneme for phoneme in pronunciation if phoneme in vowels])
+    # vowel can have 1, 2, or 0 appended to indicate stress
+    return len([phoneme for phoneme in pronunciation if phoneme[:2] in vowels])
 
 
 def count_from_word(word):
@@ -29,6 +30,7 @@ def filter_by_syllable(words, n):
 def filter_by_syllables(words, nn):
     return [word for word in words if set(nn).intersection(count_from_word(word))]
 
+
 if __name__ == '__main__':
     oparser = argparse.ArgumentParser(description="syllable filter",
                                       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -37,6 +39,11 @@ if __name__ == '__main__':
                          required=True,
                          type=str,
                          help="comma-separated list of nbr of syllables")
+
+    oparser.add_argument('-b', dest='retain_blank',
+                         default=False,
+                         action='store_true',
+                         help='retain blank lines in output')
 
     oparser.add_argument('files', metavar='FILE', nargs='*',
                          help='input files')
@@ -47,4 +54,6 @@ if __name__ == '__main__':
 
     for line in fileinput.input(options.files):
         tokens = line.strip().split()
-        print(' '.join(filter_by_syllables(tokens, keep_counts)))
+        result = ' '.join(filter_by_syllables(tokens, keep_counts))
+        if result or options.retain_blank:
+            print(result)
