@@ -9,6 +9,8 @@ from nltk.corpus import cmudict
 
 vowels = ['AA', 'AE', 'AH', 'AO', 'AW', 'AY', 'EH', 'ER', 'EY', 'IH', 'IY', 'OW', 'OY', 'UH', 'UW']
 
+# TODO simplify to first character?
+
 
 def count_from_pronunciation(pronunciation):
     # vowel can have 1, 2, or 0 appended to indicate stress
