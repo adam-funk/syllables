@@ -23,6 +23,13 @@ def count_from_word(word):
     return [count_from_pronunciation(pronunciation) for pronunciation in pronunciations]
 
 
+def count_from_word_to_string(word):
+    syllable_counts = count_from_word(word)
+    if syllable_counts:
+        return ','.join([str(sc) for sc in syllable_counts])
+    return '0'
+
+
 def filter_by_syllable(words, n):
     return [word for word in words if n in count_from_word(word)]
 
@@ -36,9 +43,13 @@ if __name__ == '__main__':
                                       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     oparser.add_argument("-n", dest="syllable_list",
-                         required=True,
                          type=str,
                          help="comma-separated list of nbr of syllables")
+
+    oparser.add_argument('-c', dest='count',
+                         default=False,
+                         action='store_true',
+                         help='add syllable count after each word')
 
     oparser.add_argument('-b', dest='retain_blank',
                          default=False,
@@ -50,10 +61,19 @@ if __name__ == '__main__':
 
     options = oparser.parse_args()
 
-    keep_counts = [int(s) for s in options.syllable_list.split(',')]
+    if options.syllable_list:
+        keep_counts = [int(s) for s in options.syllable_list.split(',')]
 
-    for line in fileinput.input(options.files):
-        tokens = line.strip().split()
-        result = ' '.join(filter_by_syllables(tokens, keep_counts))
-        if result or options.retain_blank:
-            print(result)
+        for line in fileinput.input(options.files):
+            tokens = line.strip().split()
+            result = ' '.join(filter_by_syllables(tokens, keep_counts))
+            if result or options.retain_blank:
+                print(result)
+
+    elif options.count:
+        for line in fileinput.input(options.files):
+            tokens = line.strip().split()
+            result = ' '.join([' '.join([token, count_from_word_to_string(token)]) for token in tokens])
+            if result or options.retain_blank:
+                print(result)
+
