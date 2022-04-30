@@ -6,15 +6,21 @@ import argparse
 from nltk.corpus import cmudict
 
 # https://www.nltk.org/_modules/nltk/corpus/reader/cmudict.html
+# vowels = ['AA', 'AE', 'AH', 'AO', 'AW', 'AY', 'EH', 'ER', 'EY', 'IH', 'IY', 'OW', 'OY', 'UH', 'UW']
 
-vowels = ['AA', 'AE', 'AH', 'AO', 'AW', 'AY', 'EH', 'ER', 'EY', 'IH', 'IY', 'OW', 'OY', 'UH', 'UW']
+vowels = ['A', 'E', 'I', 'O', 'U']
 
-# TODO simplify to first character?
+
+def dump_dictionary():
+    for word, pronunciation in cmudict.entries():
+        s = count_from_pronunciation(pronunciation)
+        print(f'{word} {s}')
+    return
 
 
 def count_from_pronunciation(pronunciation):
     # vowel can have 1, 2, or 0 appended to indicate stress
-    return len([phoneme for phoneme in pronunciation if phoneme[:2] in vowels])
+    return len([phoneme for phoneme in pronunciation if phoneme[:1] in vowels])
 
 
 def count_from_word(word):
@@ -58,12 +64,20 @@ if __name__ == '__main__':
                          action='store_true',
                          help='retain blank lines in output')
 
+    oparser.add_argument('-d', dest='dump',
+                         default=False,
+                         action='store_true',
+                         help='dump the dictionary')
+
     oparser.add_argument('files', metavar='FILE', nargs='*',
                          help='input files')
 
     options = oparser.parse_args()
 
-    if options.syllable_list:
+    if options.dump:
+        dump_dictionary()
+
+    elif options.syllable_list:
         keep_counts = [int(s) for s in options.syllable_list.split(',')]
 
         for line in fileinput.input(options.files):
